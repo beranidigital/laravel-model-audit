@@ -3,7 +3,6 @@
 namespace BeraniDigitalID\LaravelModelAudit\Listeners;
 
 use BeraniDigitalID\LaravelModelAudit\Models\AuditTrail;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
 class AuditListener
