@@ -1,26 +1,19 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace BeraniDigitalID\LaravelModelAudit;
 
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
+use BeraniDigitalID\LaravelModelAudit\Listeners\AuditListener;
 use Illuminate\Filesystem\Filesystem;
-use Livewire\Features\SupportTesting\Testable;
+use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use VendorName\Skeleton\Commands\SkeletonCommand;
-use VendorName\Skeleton\Testing\TestsSkeleton;
 
-class SkeletonServiceProvider extends PackageServiceProvider
+class LaravelModelAuditServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'skeleton';
+    public static string $name = 'laravel-model-audit';
 
-    public static string $viewNamespace = 'skeleton';
+    public static string $viewNamespace = 'laravel-model-audit';
 
     public function configurePackage(Package $package): void
     {
@@ -36,7 +29,7 @@ class SkeletonServiceProvider extends PackageServiceProvider
                     ->publishConfigFile()
                     ->publishMigrations()
                     ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub(':vendor_slug/:package_slug');
+                    ->askToStarRepoOnGitHub('beranidigital/laravel-model-audit');
             });
 
         $configFileName = $package->shortName();
@@ -62,49 +55,39 @@ class SkeletonServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        // Asset Registration
-        FilamentAsset::register(
-            $this->getAssets(),
-            $this->getAssetPackageName()
-        );
 
-        FilamentAsset::registerScriptData(
-            $this->getScriptData(),
-            $this->getAssetPackageName()
-        );
-
-        // Icon Registration
-        FilamentIcon::register($this->getIcons());
 
         // Handle Stubs
         if (app()->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
-                    $file->getRealPath() => base_path("stubs/skeleton/{$file->getFilename()}"),
-                ], 'skeleton-stubs');
+                    $file->getRealPath() => base_path("stubs/laravel-model-audit/{$file->getFilename()}"),
+                ], 'laravel-model-audit-stubs');
             }
         }
+        Event::listen('eloquent.created: *', function ($name, $models) {
+            foreach ($models as $model) {
+                AuditListener::onCreated($model);
+            }
+        });
+        Event::listen('eloquent.updated: *', function ($name, $models) {
+            foreach ($models as $model) {
+                AuditListener::onUpdated($model);
+            }
+        });
+        Event::listen('eloquent.deleted: *', function ($name, $models) {
+            foreach ($models as $model) {
+                AuditListener::onDeleted($model);
+            }
+        });
 
-        // Testing
-        Testable::mixin(new TestsSkeleton());
     }
 
     protected function getAssetPackageName(): ?string
     {
-        return ':vendor_slug/:package_slug';
+        return 'beranidigital/laravel-model-audit';
     }
 
-    /**
-     * @return array<Asset>
-     */
-    protected function getAssets(): array
-    {
-        return [
-            // AlpineComponent::make('skeleton', __DIR__ . '/../resources/dist/components/skeleton.js'),
-            Css::make('skeleton-styles', __DIR__ . '/../resources/dist/skeleton.css'),
-            Js::make('skeleton-scripts', __DIR__ . '/../resources/dist/skeleton.js'),
-        ];
-    }
 
     /**
      * @return array<class-string>
@@ -112,7 +95,6 @@ class SkeletonServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            SkeletonCommand::class,
         ];
     }
 
@@ -146,7 +128,7 @@ class SkeletonServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_skeleton_table',
+            'create_laravel-model-audit_table',
         ];
     }
 }
