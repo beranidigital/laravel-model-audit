@@ -24,6 +24,7 @@ class AuditListener
     {
         $author = $user ?? auth()->user();
 
+
         $author_additional_data = $author_additional_data ?? [
             'ip' => request()->ip(),
             'user_agent' => request()->userAgent(),
@@ -33,13 +34,11 @@ class AuditListener
                 $description = 'Symfony/Laravel/Console/Seeder';
             }
         }
-        $model_type = $model ? get_class($model) : null;
-        $model_id = $model ? $model->id : null;
         $auditTrail = new AuditTrail;
-        $auditTrail->author = $author;
+        $auditTrail->author()->associate($author);
         $auditTrail->title = $title;
         $auditTrail->description = $description;
-        $auditTrail->auditable = $model;
+        $auditTrail->auditable()->associate($model);
         $auditTrail->old_values = $old_values;
         $auditTrail->new_values = $new_values;
         $auditTrail->author_additional_data = $author_additional_data;
