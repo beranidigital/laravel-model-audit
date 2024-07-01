@@ -2,6 +2,7 @@
 
 namespace BeraniDigitalID\LaravelModelAudit;
 
+use BeraniDigitalID\LaravelModelAudit\Commands\LaravelModelAuditCommand;
 use BeraniDigitalID\LaravelModelAudit\Listeners\AuditListener;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Event;
@@ -54,7 +55,6 @@ class LaravelModelAuditServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
 
-
         // Handle Stubs
         if (app()->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
@@ -64,33 +64,14 @@ class LaravelModelAuditServiceProvider extends PackageServiceProvider
             }
         }
 
-
     }
 
-    public function boot()
-    {
-        Event::listen('eloquent.created: *', function ($name, $models) {
-            foreach ($models as $model) {
-                AuditListener::onCreated($model);
-            }
-        });
-        Event::listen('eloquent.updated: *', function ($name, $models) {
-            foreach ($models as $model) {
-                AuditListener::onUpdated($model);
-            }
-        });
-        Event::listen('eloquent.deleted: *', function ($name, $models) {
-            foreach ($models as $model) {
-                AuditListener::onDeleted($model);
-            }
-        });
-    }
+
 
     protected function getAssetPackageName(): ?string
     {
         return 'beranidigital/laravel-model-audit';
     }
-
 
     /**
      * @return array<class-string>
@@ -98,6 +79,7 @@ class LaravelModelAuditServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
+            LaravelModelAuditCommand::class,
         ];
     }
 
