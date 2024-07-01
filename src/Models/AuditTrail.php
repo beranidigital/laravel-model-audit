@@ -2,14 +2,13 @@
 
 namespace BeraniDigitalID\LaravelModelAudit\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AuditTrail extends Model
 {
-
     protected $fillable = [
-        'user_id',
+        'author_type',
+        'author_id',
         'title',
         'description',
         'auditable_type',
@@ -25,11 +24,14 @@ class AuditTrail extends Model
         'author_additional_data' => 'array',
     ];
 
-
-
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function author(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
-        return $this->belongsTo(App\Models\User::class);
+        return $this->morphTo();
+    }
+
+    public function auditable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo();
     }
 
     public function getDiff(): array

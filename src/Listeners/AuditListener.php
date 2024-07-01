@@ -21,10 +21,10 @@ class AuditListener
         self::log(__('Created :model', ['model' => $model->getTable()]), null, $model, null, $model->toArray());
     }
 
-    public static function log(string $title, ?string $description = null, $model = null, $old_values = null, $new_values = null, $author_additional_data = null, ?Authenticatable $user = null): void
+    public static function log(string $title, ?string $description = null, $model = null, $old_values = null, $new_values = null, $author_additional_data = null, ?Model $author = null): void
     {
-        $user = $user ?? auth()->user();
-        $user_id = $user?->getAuthIdentifier();
+        $author = $user ?? auth()->user();
+
         $author_additional_data = $author_additional_data ?? [
             'ip' => request()->ip(),
             'user_agent' => request()->userAgent(),
@@ -37,11 +37,10 @@ class AuditListener
         $model_type = $model ? get_class($model) : null;
         $model_id = $model ? $model->id : null;
         $auditTrail = new AuditTrail;
-        $auditTrail->user_id = $user_id;
+        $auditTrail->author = $author;
         $auditTrail->title = $title;
         $auditTrail->description = $description;
-        $auditTrail->auditable_type = $model_type;
-        $auditTrail->auditable_id = $model_id;
+        $auditTrail->auditable = $model;
         $auditTrail->old_values = $old_values;
         $auditTrail->new_values = $new_values;
         $auditTrail->author_additional_data = $author_additional_data;

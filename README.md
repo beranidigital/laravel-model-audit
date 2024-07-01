@@ -15,6 +15,7 @@ You can install the package via composer:
 
 ```bash
 composer require beranidigital/laravel-model-audit
+php artisan laravel-model-audit:install
 ```
 
 Publish and run the migrations with:

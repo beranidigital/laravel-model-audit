@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('audit_trails', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(\App\Models\User::class)->nullable()->comment("User who triggered the event")->constrained()->nullOnDelete();
+            $table->nullableMorphs('author'); // User who triggered the event
             $table->string('title')->comment("Title of the event");
             $table->string('description')->nullable()->comment("Description of the event");
             $table->nullableMorphs('auditable'); // Model that was changed
