@@ -17,7 +17,7 @@ You can install the package via composer:
 composer require beranidigital/laravel-model-audit
 ```
 
-You can publish and run the migrations with:
+Publish and run the migrations with:
 
 ```bash
 php artisan vendor:publish --tag="laravel-model-audit-migrations"
@@ -30,25 +30,6 @@ You can publish the config file with:
 php artisan vendor:publish --tag="laravel-model-audit-config"
 ```
 
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-model-audit-views"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-## Usage
-
-```php
-$laravelModelAudit = new BeraniDigitalID\LaravelModelAudit();
-echo $laravelModelAudit->echoPhrase('Hello, BeraniDigitalID!');
-```
 
 ## Testing
 
