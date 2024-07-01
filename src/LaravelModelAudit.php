@@ -2,4 +2,6 @@
 
 namespace BeraniDigitalID\LaravelModelAudit;
 
-class LaravelModelAudit {}
+use BeraniDigitalID\LaravelModelAudit\Listeners\AuditListener;
+
+class LaravelModelAudit extends AuditListener {}

@@ -38,9 +38,7 @@ class LaravelModelAuditServiceProvider extends PackageServiceProvider
             $package->hasConfigFile();
         }
 
-        if (file_exists($package->basePath('/../database/migrations'))) {
-            $package->hasMigrations($this->getMigrations());
-        }
+        $package->hasMigrations($this->getMigrations());
 
         if (file_exists($package->basePath('/../resources/lang'))) {
             $package->hasTranslations();
@@ -65,6 +63,12 @@ class LaravelModelAuditServiceProvider extends PackageServiceProvider
                 ], 'laravel-model-audit-stubs');
             }
         }
+
+
+    }
+
+    public function boot()
+    {
         Event::listen('eloquent.created: *', function ($name, $models) {
             foreach ($models as $model) {
                 AuditListener::onCreated($model);
@@ -80,7 +84,6 @@ class LaravelModelAuditServiceProvider extends PackageServiceProvider
                 AuditListener::onDeleted($model);
             }
         });
-
     }
 
     protected function getAssetPackageName(): ?string
@@ -128,7 +131,7 @@ class LaravelModelAuditServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_laravel-model-audit_table',
+            'create_laravel_model_audit_table',
         ];
     }
 }
