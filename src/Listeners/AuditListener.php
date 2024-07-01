@@ -24,7 +24,6 @@ class AuditListener
     {
         $author = $user ?? auth()->user();
 
-
         $author_additional_data = $author_additional_data ?? [
             'ip' => request()->ip(),
             'user_agent' => request()->userAgent(),
