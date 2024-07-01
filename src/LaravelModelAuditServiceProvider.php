@@ -2,7 +2,9 @@
 
 namespace BeraniDigitalID\LaravelModelAudit;
 
+use App\Listeners\AuditListener;
 use BeraniDigitalID\LaravelModelAudit\Commands\LaravelModelAuditCommand;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelModelAuditServiceProvider extends ServiceProvider
@@ -16,6 +18,21 @@ class LaravelModelAuditServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../database/migrations/' => database_path('migrations'),
         ], 'laravel-model-audit-migrations');
+        Event::listen('eloquent.created: *', function ($name, $models) {
+            foreach ($models as $model) {
+                AuditListener::onCreated($model);
+            }
+        });
+        Event::listen('eloquent.updated: *', function ($name, $models) {
+            foreach ($models as $model) {
+                AuditListener::onUpdated($model);
+            }
+        });
+        Event::listen('eloquent.deleted: *', function ($name, $models) {
+            foreach ($models as $model) {
+                AuditListener::onDeleted($model);
+            }
+        });
     }
 
     protected function getAssetPackageName(): ?string
