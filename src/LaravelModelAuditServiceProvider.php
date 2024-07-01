@@ -2,8 +2,8 @@
 
 namespace BeraniDigitalID\LaravelModelAudit;
 
-use App\Listeners\AuditListener;
 use BeraniDigitalID\LaravelModelAudit\Commands\LaravelModelAuditCommand;
+use BeraniDigitalID\LaravelModelAudit\Listeners\AuditListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,6 +18,9 @@ class LaravelModelAuditServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../database/migrations/' => database_path('migrations'),
         ], 'laravel-model-audit-migrations');
+        $this->publishes([
+            __DIR__ . './Models/' => app_path('Models'),
+        ], 'laravel-model-audit-model');
         Event::listen('eloquent.created: *', function ($name, $models) {
             foreach ($models as $model) {
                 AuditListener::onCreated($model);
