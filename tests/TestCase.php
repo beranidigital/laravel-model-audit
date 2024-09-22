@@ -28,8 +28,21 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        $migration = include __DIR__ . '/../database/migrations/create_laravel_model_audit_table.php.stub';
-        $migration->up();
+        $migration_folder = __DIR__ . '/../database/migrations/';
+        $files = scandir($migration_folder);
+        // sort the files
+        sort($files);
+        // reverse the array so the latest migration is the first one
+
+
+        foreach ($files as $file) {
+
+            if (in_array($file, ['.', '..'])) {
+                continue;
+            }
+            $migration = include $migration_folder . $file;
+            $migration->up();
+        }
 
     }
 }
