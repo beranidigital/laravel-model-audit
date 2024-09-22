@@ -34,7 +34,6 @@ class TestCase extends Orchestra
         sort($files);
         // reverse the array so the latest migration is the first one
 
-
         foreach ($files as $file) {
 
             if (in_array($file, ['.', '..'])) {
